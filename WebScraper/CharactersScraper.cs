@@ -8,7 +8,7 @@ namespace CharacterDatabaseAPI.WebScraper
     {             
         private const string OutDir = "WebScraper/out/";
    
-        public List<NameCategoryValue>? Characters { get; set; }
+        public List<Character>? Characters { get; set; }
         
         public void WriteCharactersToJSONFile(string fileName = "Characters.json")
         {
@@ -17,6 +17,6 @@ namespace CharacterDatabaseAPI.WebScraper
             Directory.CreateDirectory(OutDir);
             File.WriteAllText(OutDir+fileName, jsonString);
         }
-        public abstract List<NameCategoryValue> RetrieveCharacters();
+        public abstract List<Character> RetrieveCharacters();
     }
 }
