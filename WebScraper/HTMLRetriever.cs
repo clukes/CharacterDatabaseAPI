@@ -1,6 +1,6 @@
 using HtmlAgilityPack;
 
-namespace NameGeneratorAPI.WebScraper
+namespace CharacterDatabaseAPI.WebScraper
 {
     public class HTMLRetriever
     {

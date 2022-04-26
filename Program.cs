@@ -1,31 +1,33 @@
-using Microsoft.EntityFrameworkCore;
-using NameGeneratorAPI.Models;
+using CharacterDatabaseAPI.WebScraper;
+WebScraperProgram.ScraperMain();
+// using Microsoft.EntityFrameworkCore;
+// using CharacterDatabaseAPI.Models;
 
-var builder = WebApplication.CreateBuilder(args);
+// var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// // Add services to the container.
 
-builder.Services.AddControllers();
-builder.Services.AddDbContext<StarWarsNameContext>(opt =>
-    opt.UseInMemoryDatabase("StarWarsNames"));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+// builder.Services.AddControllers();
+// builder.Services.AddDbContext<NameCategoryValueContext>(opt =>
+//     opt.UseInMemoryDatabase("Characters"));
+// // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// // builder.Services.AddEndpointsApiExplorer();
+// // builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+// var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseDeveloperExceptionPage();
-    // app.UseSwagger();
-    // app.UseSwaggerUI();
-}
+// // Configure the HTTP request pipeline.
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseDeveloperExceptionPage();
+//     // app.UseSwagger();
+//     // app.UseSwaggerUI();
+// }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
-app.MapControllers();
+// app.MapControllers();
 
-app.Run();
+// app.Run();

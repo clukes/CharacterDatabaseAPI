@@ -1,14 +1,14 @@
 ﻿using System;
-using NameGeneratorAPI.Models;
+using CharacterDatabaseAPI.Models;
 
-namespace NameGeneratorAPI.WebScraper
+namespace CharacterDatabaseAPI.WebScraper
 {
     public class WebScraperProgram
     {
         public static void ScraperMain()
         {
             StarWarsCharactersScraper starWarsScraper = new StarWarsCharactersScraper();
-            List<StarWarsName> data = starWarsScraper.RetrieveCharacters();
+            List<NameCategoryValue> data = starWarsScraper.RetrieveCharacters();
             starWarsScraper.WriteCharactersToJSONFile();
             Console.WriteLine(string.Join("\n", data));
         }
