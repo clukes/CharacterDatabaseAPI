@@ -30,6 +30,9 @@ public class CharacterCollectionService
     public async Task CreateAsync(CharacterCollection newCollection) =>
         await _CharacterCollectionCollection.InsertOneAsync(newCollection);
 
+    public async Task CreateMultipleAsync(IEnumerable<CharacterCollection> newCollections) =>
+        await _CharacterCollectionCollection.InsertManyAsync(newCollections);
+
     public async Task UpdateAsync(string id, CharacterCollection updatedCollection) =>
         await _CharacterCollectionCollection.ReplaceOneAsync(x => x.Id == id, updatedCollection);
 

@@ -7,7 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(
+        options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
+        
 builder.Services.Configure<CharacterDatabaseSettings>(
     builder.Configuration.GetSection("CharacterDatabase"));
 
@@ -22,21 +24,21 @@ builder.Configuration.AddEnvironmentVariables();
 
 var app = builder.Build();
 // WebScraperProgram.ScraperRetrieve();
-WebScraperProgram.ScraperDBSave(app.Services.GetService<CharacterCollectionService>()!);
+// WebScraperProgram.ScraperDBSave(app.Services.GetService<CharacterCollectionService>()!);
 
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseDeveloperExceptionPage();
-//     // app.UseSwagger();
-//     // app.UseSwaggerUI();
-// }
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    // app.UseSwagger();
+    // app.UseSwaggerUI();
+}
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
-// app.UseAuthorization();
+app.UseAuthorization();
 
-// app.MapControllers();
+app.MapControllers();
 
-// app.Run();
+app.Run();
 
