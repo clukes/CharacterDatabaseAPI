@@ -120,3 +120,4 @@ src/.vs/config/applicationhost.config
 .idea/
 
 .env
+.vscode/launch.json
