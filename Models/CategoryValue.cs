@@ -1,15 +1,18 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 namespace CharacterDatabaseAPI.Models
 {
     public class CategoryValue
     {
-        public long Id { get; set; }
-        public CategoryType CategoryType { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string? Id { get; set; }
         public string Value { get; set; }
-
-        public CategoryValue(CategoryType categoryType, string value) 
+        public IEnumerable<Character> Characters { get; set; }
+        public CategoryValue(string value, IEnumerable<Character>? characters = null) 
         {
-            CategoryType = categoryType;
             Value = value;
+            Characters = characters ?? new List<Character>();
         }
     }
 }

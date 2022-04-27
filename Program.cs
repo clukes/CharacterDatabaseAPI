@@ -1,22 +1,30 @@
 using CharacterDatabaseAPI.WebScraper;
-WebScraperProgram.ScraperMain();
-// using Microsoft.EntityFrameworkCore;
-// using CharacterDatabaseAPI.Models;
 
-// var builder = WebApplication.CreateBuilder(args);
+using CharacterDatabaseAPI.Models;
+using CharacterDatabaseAPI.Services;
 
-// // Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
-// builder.Services.AddControllers();
-// builder.Services.AddDbContext<NameCategoryValueContext>(opt =>
-//     opt.UseInMemoryDatabase("Characters"));
-// // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-// // builder.Services.AddEndpointsApiExplorer();
-// // builder.Services.AddSwaggerGen();
+// Add services to the container.
 
-// var app = builder.Build();
+builder.Services.AddControllers();
+builder.Services.Configure<CharacterDatabaseSettings>(
+    builder.Configuration.GetSection("CharacterDatabase"));
 
-// // Configure the HTTP request pipeline.
+builder.Services.AddSingleton<CharacterCollectionService>();
+
+builder.Configuration.AddEnvironmentVariables();
+
+
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+// WebScraperProgram.ScraperRetrieve();
+WebScraperProgram.ScraperDBSave(app.Services.GetService<CharacterCollectionService>()!);
+
+// Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
 //     app.UseDeveloperExceptionPage();
@@ -31,3 +39,4 @@ WebScraperProgram.ScraperMain();
 // app.MapControllers();
 
 // app.Run();
+

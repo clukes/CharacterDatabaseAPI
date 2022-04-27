@@ -1,35 +1,42 @@
 using HtmlAgilityPack;
-using System.Text.Json;
 using CharacterDatabaseAPI.Models;
 
 namespace CharacterDatabaseAPI.WebScraper
 {
     public class StarWarsCharactersScraper : CharactersScraper
     {
-        public const string WikiPageUrl = "List_of_Star_Wars_characters";
+        private const string DefaultFileName = "StarWarsCharacters.json";
+        private const string WikiPageUrl = "List_of_Star_Wars_characters";
         private const string HeadlineClass = "mw-headline";
         private const string StopHeadlineText = "See also";
-        private const string OutDir = "out/";
-        public new void WriteCharactersToJSONFile(string fileName = "StarWarsCharacters.json") => base.WriteCharactersToJSONFile(fileName);
-
-        public CategoryType SpeciesType { get; set; }
-        public CategoryType CategoryType { get; set; }
-
-        
-        public StarWarsCharactersScraper(CategoryType? speciesType = null, CategoryType? categoryType = null) {
-            SpeciesType = speciesType ?? new CategoryType("Species");
-            CategoryType = categoryType ?? new CategoryType("Category");
+        private CategoryType SpeciesCategoryType;
+        private CategoryType CharacterCategoryType;
+        public StarWarsCharactersScraper(CharacterCollection? characters = null) : base(characters) 
+        {
+            SpeciesCategoryType = new CategoryType("Species");
+            CharacterCategoryType = new CategoryType("Category");
         }
-        public override List<Character> RetrieveCharacters() {
+        public override void WriteCharactersToJSONFile(string fileName = DefaultFileName)
+        {
+            base.WriteCharactersToJSONFile(fileName);
+        }
+
+        public override CharacterCollection? ReadCharactersFromJSONFile(string fileName = DefaultFileName)
+        {
+            return base.ReadCharactersFromJSONFile(fileName);
+        }
+        public override CharacterCollection? RetrieveCharacters() {
             HtmlDocument document = HTMLRetriever.GetWikiDocument(WikiPageUrl);
             System.Console.WriteLine($"Processing: {WikiPageUrl}");
 
             HtmlNodeCollection speciesGroupingsNodes = document.DocumentNode.SelectNodes($"//h2/span[@class='{HeadlineClass}'][following::h2/span[.='{StopHeadlineText}']]");
 
-            if(speciesGroupingsNodes == null || !speciesGroupingsNodes.Any()) return new List<Character>();
-
-            IEnumerable<Character> characters = speciesGroupingsNodes.SelectMany(x => CreateCharactersFromSpeciesGrouping(x));
-            Characters = characters.ToList();
+            if(speciesGroupingsNodes == null || !speciesGroupingsNodes.Any()) return null;
+            IEnumerable<Character> characters = new List<Character>();
+            characters = speciesGroupingsNodes.Take(1).SelectMany(x => CreateCharactersFromSpeciesGrouping(x)).ToList();
+        
+            IEnumerable<CategoryType> categoryTypes = new List<CategoryType>() { SpeciesCategoryType, CharacterCategoryType };
+            Characters = new CharacterCollection("Star Wars", categoryTypes, characters);
             return Characters;
         }
 
@@ -40,7 +47,7 @@ namespace CharacterDatabaseAPI.WebScraper
 
             if(categoryNodes == null || !categoryNodes.Any()) return new List<Character>();
 
-            IEnumerable<Character> characters = categoryNodes.SelectMany(x => CreateCharactersFromCategory(speciesGroupingName, x));
+            IEnumerable<Character> characters = categoryNodes.Take(1).SelectMany(x => CreateCharactersFromCategory(speciesGroupingName, x)).ToList();
             return characters;
         }
 
@@ -50,25 +57,33 @@ namespace CharacterDatabaseAPI.WebScraper
 
             string speciesName, characterSelector;
             
-            CategoryValue categoryValue = new CategoryValue(CategoryType, categoryName);
+            CategoryValue characterCategoryValue = new CategoryValue(categoryName);
+            CharacterCategoryType.AppendValue(characterCategoryValue);
+
+            CategorySet characterCategorySet = new CategorySet(CharacterCategoryType.Name, characterCategoryValue.Value);
+            IEnumerable<CategorySet> categorySets = new List<CategorySet>() { characterCategorySet };
+            IEnumerable<Character> characters;
             if (speciesGroupingName == "Humans")
             {
                 speciesName = "Human";
                 characterSelector = $"//following::tr/td[1][preceding::h3[1]/span[.=\"{categoryName}\"]]";
-                return CreateCharactersFromSpecies(speciesName, characterSelector, categoryValue, categoryNode);
+                characters = CreateCharactersFromSpecies(speciesName, characterSelector, categorySets, categoryNode);
             }
-
-           
-            HtmlNodeCollection speciesNodes = categoryNode.SelectNodes($"//following::h4/span[@class='{HeadlineClass}'][preceding::h3[1]/span[.=\"{categoryName}\"]]");
-            if(speciesNodes == null || !speciesNodes.Any()) return new List<Character>();
-            return speciesNodes.SelectMany(x => {
-                string speciesName = x.InnerText;
-                string characterSelector = $"//following::tr/td[1][following::h2/span[.='{StopHeadlineText}']][preceding::h4[1]/span[.=\"{speciesName}\"]][preceding::h3[1]/span[.=\"{categoryName}\"]]";
-                return CreateCharactersFromSpecies(speciesName, characterSelector, categoryValue, categoryNode);
-            });
+            else
+            {
+                HtmlNodeCollection speciesNodes = categoryNode.SelectNodes($"//following::h4/span[@class='{HeadlineClass}'][preceding::h3[1]/span[.=\"{categoryName}\"]]");
+                if(speciesNodes == null || !speciesNodes.Any()) return new List<Character>();
+                characters = speciesNodes.SelectMany(x => {
+                    string speciesName = x.InnerText;
+                    string characterSelector = $"//following::tr/td[1][following::h2/span[.='{StopHeadlineText}']][preceding::h4[1]/span[.=\"{speciesName}\"]][preceding::h3[1]/span[.=\"{categoryName}\"]]";
+                    return CreateCharactersFromSpecies(speciesName, characterSelector, categorySets, categoryNode);
+                }).ToList();
+            }
+            characterCategoryValue.Characters = characters;
+            return characters;
         }
 
-        private IEnumerable<Character> CreateCharactersFromSpecies(string speciesName, string characterSelector, CategoryValue categoryValue, HtmlNode categoryNode) 
+        private IEnumerable<Character> CreateCharactersFromSpecies(string speciesName, string characterSelector, IEnumerable<CategorySet> categorySets, HtmlNode categoryNode) 
         {
             System.Console.WriteLine($"Species: {speciesName}");
 
@@ -76,25 +91,30 @@ namespace CharacterDatabaseAPI.WebScraper
 
             if(characterNodes == null || !characterNodes.Any()) return new List<Character>();
             
-            CategoryValue speciesValue = new CategoryValue(SpeciesType, speciesName);
-            CategoryValue[] categoryValues = new CategoryValue[] { categoryValue, speciesValue };
+            CategoryValue speciesCategoryValue = new CategoryValue(speciesName);
+            SpeciesCategoryType.AppendValue(speciesCategoryValue);
+            categorySets = categorySets.Append(new CategorySet(SpeciesCategoryType.Name, speciesCategoryValue.Value));
 
-            IEnumerable<Character> characters = characterNodes.Select(characterNode => CreateCharacter(categoryValues, characterNode));
+            IEnumerable<Character> characters = characterNodes.Select(characterNode => CreateCharacter(categorySets, characterNode)).ToList();
+            speciesCategoryValue.Characters = characters;
             return characters;
         }
 
-        private Character CreateCharacter(CategoryValue[] categoryValues, HtmlNode characterNode) {
+        private Character CreateCharacter(IEnumerable<CategorySet> categorySets, HtmlNode characterNode) {
             string name = characterNode.InnerText.Trim();
             HtmlNode alternateNameNode = characterNode.SelectSingleNode(".//span[@style='font-size:85%;']");
             string? alternateName = alternateNameNode?.InnerText.Trim();
-            string[] names = new string[] {name};
+            string[] names;
             if(alternateName != null) {
                 name = name.Replace(alternateName, "").Trim();
-                names.Append(alternateName);
+                names = new string[] {name, alternateName};
             }
+            else names = new string[] {name};
+
             System.Console.WriteLine($"Name: {name}, Alternate: {alternateName}");
 
-            return new Character(names, categoryValues);
+            Character character = new Character(names, categorySets);
+            return character;
         }
     }
 }
