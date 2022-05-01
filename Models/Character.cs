@@ -8,12 +8,12 @@ namespace CharacterDatabaseAPI.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
         public string[] Names { get; set; }
-        public IEnumerable<CategorySet> CategorySets { get; set; }
+        public IDictionary<string, string> CategorySets { get; set; }
 
-        public Character(string[] names, IEnumerable<CategorySet>? categorySets = null) 
+        public Character(string[] names, IDictionary<string, string>? categorySets = null) 
         {
             Names = names;
-            CategorySets = categorySets ?? new List<CategorySet>();
+            CategorySets = categorySets ?? new Dictionary<string, string>();
         }
 
     }

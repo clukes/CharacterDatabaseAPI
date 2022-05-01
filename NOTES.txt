@@ -1,0 +1,69 @@
+Database structure
+
+CollectionPrefix+CategoryTypeNames = 
+
+CharacterCollections
+[
+    {
+        _id: 0,
+        Universe: Star Wars,
+        CollectionPrefix: StarWars,
+        CategoryTypeNames: [Species, Category],
+    },
+    {
+        _id: 1,
+        Universe: Lord of the Rings,
+        CollectionPrefix: LOTR,
+        CategoryTypeNames: [Race]
+    },
+]
+
+StarWarsSpecies
+[
+    {
+        _id: 2,
+        Value: Human,
+        Characters: [
+            {
+                Characterid: 4,
+                Names: [Anakin Skywalker, Darth Vader],
+                CategorySets: {Species: Human, Category: Skywalker Family},
+            }
+        ]
+    }
+]
+
+StarWarsCategory
+[
+    {
+        _id: 3,
+        Value: Human,
+        Characters: [
+            {
+                CharacterId: 4,
+                Names: [Anakin Skywalker, Darth Vader],
+                CategorySets: {Species: Human, Category: Skywalker Family},
+            }
+        ]
+    }
+
+]
+
+StarWarsCharacters
+[
+    {
+        CharacterId: 4,
+        Names: [Anakin Skywalker, Darth Vader],
+        CategorySets: {Species: Human, Category: Skywalker Family},
+    }
+]
+
+LOTRRace
+[
+    ...
+]
+
+LOTRCharacters
+[
+    ...
+]

@@ -9,13 +9,13 @@ namespace CharacterDatabaseAPI.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
         public string Universe { get; set; }
-        public IEnumerable<CategoryType> CategoryTypes { get; set; }
-        public IEnumerable<Character> Characters { get; set; }
-        public CharacterCollection(string universe, IEnumerable<CategoryType> categoryTypes, IEnumerable<Character> characters) 
+        public string CollectionPrefix { get; set; }
+        public IEnumerable<string> CategoryTypeNames { get; set; }
+        public CharacterCollection(string universe, string collectionPrefix, IEnumerable<string> categoryTypeNames) 
         {
             Universe = universe;
-            CategoryTypes = categoryTypes;
-            Characters = characters;
+            CollectionPrefix = collectionPrefix;
+            CategoryTypeNames = categoryTypeNames;
         }
     }
 }
