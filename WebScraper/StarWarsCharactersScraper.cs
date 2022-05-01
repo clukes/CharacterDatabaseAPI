@@ -5,64 +5,55 @@ namespace CharacterDatabaseAPI.WebScraper
 {
     public class StarWarsCharactersScraper : CharactersScraper
     {
-        private const string DefaultFileName = "StarWarsCharacters.json";
         private const string WikiPageUrl = "List_of_Star_Wars_characters";
         private const string HeadlineClass = "mw-headline";
         private const string StopHeadlineText = "See also";
-        private CategoryType SpeciesCategoryType;
-        private CategoryType CharacterCategoryType;
-        public StarWarsCharactersScraper(CharacterCollection? characters = null) : base(characters) 
+        private const string speciesCategoryName = "Species";
+        private const string categoryCategoryName = "Category";
+        public StarWarsCharactersScraper(CharacterCollection? characterCollection = null, ICollection<Character>? characters = null, ICollection<CategoryValue>? categoryValues = null) : base(characterCollection, characters, categoryValues) 
         {
-            SpeciesCategoryType = new CategoryType("Species");
-            CharacterCategoryType = new CategoryType("Category");
+            DefaultDirName = "StarWars/";
+            if(characterCollection == null)
+            {
+                ICollection<string> categoryTypeNames = new List<string>() {speciesCategoryName, categoryCategoryName};
+                CharacterCollection = new CharacterCollection("Star Wars", "StarWars", categoryTypeNames);
+            }
         }
-        public override void WriteCharactersToJSONFile(string fileName = DefaultFileName)
-        {
-            base.WriteCharactersToJSONFile(fileName);
-        }
-
-        public override CharacterCollection? ReadCharactersFromJSONFile(string fileName = DefaultFileName)
-        {
-            return base.ReadCharactersFromJSONFile(fileName);
-        }
-        public override CharacterCollection? RetrieveCharacters() {
+        public override ICollection<Character>? RetrieveCharacters() {
             HtmlDocument document = HTMLRetriever.GetWikiDocument(WikiPageUrl);
             System.Console.WriteLine($"Processing: {WikiPageUrl}");
 
             HtmlNodeCollection speciesGroupingsNodes = document.DocumentNode.SelectNodes($"//h2/span[@class='{HeadlineClass}'][following::h2/span[.='{StopHeadlineText}']]");
 
             if(speciesGroupingsNodes == null || !speciesGroupingsNodes.Any()) return null;
-            IEnumerable<Character> characters = new List<Character>();
+            ICollection<Character> characters = new List<Character>();
             characters = speciesGroupingsNodes.Take(1).SelectMany(x => CreateCharactersFromSpeciesGrouping(x)).ToList();
         
-            IEnumerable<CategoryType> categoryTypes = new List<CategoryType>() { SpeciesCategoryType, CharacterCategoryType };
-            Characters = new CharacterCollection("Star Wars", categoryTypes, characters);
-            return Characters;
+            Characters = characters;
+            return characters;
         }
 
-        private IEnumerable<Character> CreateCharactersFromSpeciesGrouping(HtmlNode speciesGroupingNode) {
+        private ICollection<Character> CreateCharactersFromSpeciesGrouping(HtmlNode speciesGroupingNode) {
             string speciesGroupingName = speciesGroupingNode.InnerText;
             System.Console.WriteLine($"SpeciesGrouping: {speciesGroupingName}");
             HtmlNodeCollection categoryNodes = speciesGroupingNode.SelectNodes($"//following::h3/span[@class='{HeadlineClass}'][preceding::h2[1]/span[.=\"{speciesGroupingName}\"]]");
 
             if(categoryNodes == null || !categoryNodes.Any()) return new List<Character>();
 
-            IEnumerable<Character> characters = categoryNodes.Take(1).SelectMany(x => CreateCharactersFromCategory(speciesGroupingName, x)).ToList();
+            ICollection<Character> characters = categoryNodes.Take(1).SelectMany(x => CreateCharactersFromCategory(speciesGroupingName, x)).ToList();
             return characters;
         }
 
-        private IEnumerable<Character> CreateCharactersFromCategory(string speciesGroupingName, HtmlNode categoryNode) {
+        private ICollection<Character> CreateCharactersFromCategory(string speciesGroupingName, HtmlNode categoryNode) {
             string categoryName = categoryNode.InnerText;
             System.Console.WriteLine($"Category: {categoryName}");
 
             string speciesName, characterSelector;
             
             CategoryValue characterCategoryValue = new CategoryValue(categoryName);
-            CharacterCategoryType.AppendValue(characterCategoryValue);
 
-            CategorySet characterCategorySet = new CategorySet(CharacterCategoryType.Name, characterCategoryValue.Value);
-            IEnumerable<CategorySet> categorySets = new List<CategorySet>() { characterCategorySet };
-            IEnumerable<Character> characters;
+            IDictionary<string, string> categorySets = new Dictionary<string, string>() { {categoryCategoryName, characterCategoryValue.Value} };
+            ICollection<Character> characters;
             if (speciesGroupingName == "Humans")
             {
                 speciesName = "Human";
@@ -80,10 +71,11 @@ namespace CharacterDatabaseAPI.WebScraper
                 }).ToList();
             }
             characterCategoryValue.Characters = characters;
+            CategoryValues.Add(characterCategoryValue);
             return characters;
         }
 
-        private IEnumerable<Character> CreateCharactersFromSpecies(string speciesName, string characterSelector, IEnumerable<CategorySet> categorySets, HtmlNode categoryNode) 
+        private ICollection<Character> CreateCharactersFromSpecies(string speciesName, string characterSelector, IDictionary<string, string> categorySets, HtmlNode categoryNode) 
         {
             System.Console.WriteLine($"Species: {speciesName}");
 
@@ -92,15 +84,15 @@ namespace CharacterDatabaseAPI.WebScraper
             if(characterNodes == null || !characterNodes.Any()) return new List<Character>();
             
             CategoryValue speciesCategoryValue = new CategoryValue(speciesName);
-            SpeciesCategoryType.AppendValue(speciesCategoryValue);
-            categorySets = categorySets.Append(new CategorySet(SpeciesCategoryType.Name, speciesCategoryValue.Value));
+            categorySets.Add(speciesCategoryName, speciesCategoryValue.Value);
 
-            IEnumerable<Character> characters = characterNodes.Select(characterNode => CreateCharacter(categorySets, characterNode)).ToList();
+            ICollection<Character> characters = characterNodes.Select(characterNode => CreateCharacter(categorySets, characterNode)).ToList();
             speciesCategoryValue.Characters = characters;
+            CategoryValues.Add(speciesCategoryValue);
             return characters;
         }
 
-        private Character CreateCharacter(IEnumerable<CategorySet> categorySets, HtmlNode characterNode) {
+        private Character CreateCharacter(IDictionary<string, string> categorySets, HtmlNode characterNode) {
             string name = characterNode.InnerText.Trim();
             HtmlNode alternateNameNode = characterNode.SelectSingleNode(".//span[@style='font-size:85%;']");
             string? alternateName = alternateNameNode?.InnerText.Trim();

@@ -6,36 +6,50 @@ namespace CharacterDatabaseAPI.WebScraper
 {
     public class WebScraperProgram
     {
-        private static CharacterCollection? characterCollection;
         private static StarWarsCharactersScraper starWarsCharactersScraper = new StarWarsCharactersScraper();
         public static void ScraperRetrieve()
         {
-            characterCollection = starWarsCharactersScraper.RetrieveCharacters();
-            starWarsCharactersScraper.WriteCharactersToJSONFile();
-            if (characterCollection == null) return;
-            Console.WriteLine(string.Join("\n", characterCollection.Characters));
+            ICollection<Character>? characters = starWarsCharactersScraper.RetrieveCharacters();
+            if(characters == null) 
+            {
+                Console.WriteLine("No Star Wars characters found");
+                return;
+            }
+            starWarsCharactersScraper.WriteDataToJSONFile();
+            Console.WriteLine("Star Wars characters written");
         }
 
         private static void ScraperUpdateFromJSON()
         {
-            characterCollection = starWarsCharactersScraper.ReadCharactersFromJSONFile();
-            if (characterCollection == null) return;
-            Console.WriteLine(string.Join("\n", characterCollection.Characters));
+            starWarsCharactersScraper.ReadDataFromJSONFile();
+            if(starWarsCharactersScraper.Characters == null) 
+            {
+                Console.WriteLine("No Star Wars characters found");
+                return;
+            }
+            Console.WriteLine("Star Wars characters updated");
         }
 
         private static void ScraperUpdateIfNull()
         {
-            if (characterCollection != null) return; 
+            if (starWarsCharactersScraper.Characters != null) return; 
             ScraperUpdateFromJSON();
         }
 
 
-        public async static void ScraperDBSave(CharacterCollectionService characterCollectionService)
+        public async static void ScraperDBSave(CharacterCollectionService characterCollectionService, CategoryValueService categoryValueService, CharacterService characterService)
         {
             ScraperUpdateIfNull();
-            if (characterCollection == null) return;
-            Console.WriteLine(string.Join("\n", characterCollection.Characters));
-            await characterCollectionService.CreateAsync(characterCollection);
+            if(starWarsCharactersScraper.CharacterCollection == null || starWarsCharactersScraper.Characters == null) 
+            {
+                Console.WriteLine("No Star Wars characters found.");
+                return;
+            }
+            await characterCollectionService.CreateAsync(starWarsCharactersScraper.CharacterCollection);
+            
+            await categoryValueService.CreateAsync(starWarsCharactersScraper.CategoryValues);
+            await characterService.CreateMultipleAsync(starWarsCharactersScraper.Characters);
+            Console.WriteLine("Star Wars characters added to database.");
         }
 
     }

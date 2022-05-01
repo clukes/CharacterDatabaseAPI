@@ -29,14 +29,14 @@ public class CharacterService
     public async Task<Character?> GetAsync(string id) =>
         await _CharacterCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public async Task CreateAsync(Character newCollection) =>
-        await _CharacterCollection.InsertOneAsync(newCollection);
+    public async Task CreateAsync(Character newCharacter) =>
+        await _CharacterCollection.InsertOneAsync(newCharacter);
 
-    public async Task CreateMultipleAsync(IEnumerable<Character> newCollections) =>
-        await _CharacterCollection.InsertManyAsync(newCollections);
+    public async Task CreateMultipleAsync(IEnumerable<Character> newCharacters) =>
+        await _CharacterCollection.InsertManyAsync(newCharacters);
 
-    public async Task UpdateAsync(string id, Character updatedCollection) =>
-        await _CharacterCollection.ReplaceOneAsync(x => x.Id == id, updatedCollection);
+    public async Task UpdateAsync(string id, Character updatedCharacter) =>
+        await _CharacterCollection.ReplaceOneAsync(x => x.Id == id, updatedCharacter);
 
     public async Task RemoveAsync(string id) =>
         await _CharacterCollection.DeleteOneAsync(x => x.Id == id);

@@ -8,49 +8,49 @@ namespace CharacterDatabaseAPI.Controllers;
 [Route("api/[controller]")]
 public class CharacterController : ControllerBase
 {
-    private readonly CharacterCollectionService _characterCollectionService;
+    private readonly CharacterService _characterService;
 
-    public CharacterCollectionController(CharacterCollectionService characterCollectionService) =>
-        _characterCollectionService = characterCollectionService;
+    public CharacterController(CharacterService characterService) =>
+        _characterService = characterService;
 
     [HttpGet]
-    public async Task<List<CharacterCollection>> Get() =>
-        await _characterCollectionService.GetAsync();
+    public async Task<List<Character>> Get() =>
+        await _characterService.GetAsync();
 
     [HttpGet("{id:length(24)}")]
-    public async Task<ActionResult<CharacterCollection>> Get(string id)
+    public async Task<ActionResult<Character>> Get(string id)
     {
-        var characterCollection = await _characterCollectionService.GetAsync(id);
+        var character = await _characterService.GetAsync(id);
 
-        if (characterCollection is null)
+        if (character is null)
         {
             return NotFound();
         }
 
-        return characterCollection;
+        return character;
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post(CharacterCollection newCollection)
+    public async Task<IActionResult> Post(Character newCharacter)
     {
-        await _characterCollectionService.CreateAsync(newCollection);
+        await _characterService.CreateAsync(newCharacter);
 
-        return CreatedAtAction(nameof(Get), new { id = newCollection.Id }, newCollection);
+        return CreatedAtAction(nameof(Get), new { id = newCharacter.Id }, newCharacter);
     }
 
     [HttpPut("{id:length(24)}")]
-    public async Task<IActionResult> Update(string id, CharacterCollection updatedCollection)
+    public async Task<IActionResult> Update(string id, Character updatedCharacter)
     {
-        var characterCollection = await _characterCollectionService.GetAsync(id);
+        var character = await _characterService.GetAsync(id);
 
-        if (characterCollection is null)
+        if (character is null)
         {
             return NotFound();
         }
 
-        updatedCollection.Id = characterCollection.Id;
+        updatedCharacter.Id = character.Id;
 
-        await _characterCollectionService.UpdateAsync(id, updatedCollection);
+        await _characterService.UpdateAsync(id, updatedCharacter);
 
         return NoContent();
     }
@@ -58,14 +58,14 @@ public class CharacterController : ControllerBase
     [HttpDelete("{id:length(24)}")]
     public async Task<IActionResult> Delete(string id)
     {
-        var characterCollection = await _characterCollectionService.GetAsync(id);
+        var character = await _characterService.GetAsync(id);
 
-        if (characterCollection is null)
+        if (character is null)
         {
             return NotFound();
         }
 
-        await _characterCollectionService.RemoveAsync(id);
+        await _characterService.RemoveAsync(id);
 
         return NoContent();
     }

@@ -24,7 +24,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 var app = builder.Build();
 // WebScraperProgram.ScraperRetrieve();
-WebScraperProgram.ScraperDBSave(app.Services.GetService<CharacterCollectionService>()!);
+// WebScraperProgram.ScraperDBSave(app.Services.GetService<CharacterCollectionService>()!);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -29,14 +29,14 @@ public class CategoryValueService
     public async Task<CategoryValue?> GetAsync(string id) =>
         await _CategoryValueCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-    public async Task CreateAsync(CategoryValue newCollection) =>
-        await _CategoryValueCollection.InsertOneAsync(newCollection);
+    public async Task CreateAsync(CategoryValue newValue) =>
+        await _CategoryValueCollection.InsertOneAsync(newValue);
 
-    public async Task CreateMultipleAsync(IEnumerable<CategoryValue> newCollections) =>
-        await _CategoryValueCollection.InsertManyAsync(newCollections);
+    public async Task CreateMultipleAsync(IEnumerable<CategoryValue> newValues) =>
+        await _CategoryValueCollection.InsertManyAsync(newValues);
 
-    public async Task UpdateAsync(string id, CategoryValue updatedCollection) =>
-        await _CategoryValueCollection.ReplaceOneAsync(x => x.Id == id, updatedCollection);
+    public async Task UpdateAsync(string id, CategoryValue updatedValue) =>
+        await _CategoryValueCollection.ReplaceOneAsync(x => x.Id == id, updatedValue);
 
     public async Task RemoveAsync(string id) =>
         await _CategoryValueCollection.DeleteOneAsync(x => x.Id == id);
