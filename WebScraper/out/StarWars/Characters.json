@@ -1,0 +1,146 @@
+[
+	{
+		"Id": "626eb4ce140fc7cc53035bbf",
+		"Names": ["Shmi Skywalker"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc0",
+		"Names": ["Anakin Skywalker", "Darth Vader"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc1",
+		"Names": ["Luke Skywalker"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc2",
+		"Names": ["Leia Organa"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc3",
+		"Names": ["Han Solo"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc4",
+		"Names": ["Ben Solo", "Kylo Ren"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc5",
+		"Names": ["Padm\u00E9 Amidala Naberrie"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc6",
+		"Names": ["Jobal Naberrie"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc7",
+		"Names": ["Pooja Naberrie"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc8",
+		"Names": ["Ruwee Naberrie"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bc9",
+		"Names": ["Ryoo Naberrie"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bca",
+		"Names": ["Sola Naberrie"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bcb",
+		"Names": ["Beru Whitesun Lars"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bcc",
+		"Names": ["Cliegg Lars"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bcd",
+		"Names": ["Owen Lars"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bce",
+		"Names": ["Aika Lars"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bcf",
+		"Names": ["Bail Organa"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	},
+	{
+		"Id": "626eb4ce140fc7cc53035bd0",
+		"Names": ["Queen Breha Organa"],
+		"CategorySets": {
+			"Category": "Skywalker and Solo families",
+			"Species": "Human"
+		}
+	}
+]

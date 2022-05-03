@@ -1,12 +1,8 @@
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 using System.Text.Json.Serialization;
 namespace CharacterDatabaseAPI.Models
 {
     public class CategoryValue : IDocumentModel
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public string? Id { get; set; }
         public string Value { get; set; }

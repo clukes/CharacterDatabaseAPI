@@ -10,14 +10,16 @@ namespace CharacterDatabaseAPI.WebScraper
         private const string StopHeadlineText = "See also";
         private const string speciesCategoryName = "Species";
         private const string categoryCategoryName = "Category";
-        public StarWarsCharactersScraper(CharacterCollection? characterCollection = null, ICollection<Character>? characters = null, ICollection<CategoryValue>? categoryValues = null) : base(characterCollection, characters, categoryValues) 
+        public StarWarsCharactersScraper(CharacterCollection? characterCollection = null, ICollection<Character>? characters = null, IDictionary<string, ICollection<CategoryValue>>? categoryCollections = null) : base(characterCollection, characters, categoryCollections) 
         {
             DefaultDirName = "StarWars/";
-            if(characterCollection == null)
+            if(characterCollection is null)
             {
                 ICollection<string> categoryTypeNames = new List<string>() {speciesCategoryName, categoryCategoryName};
                 CharacterCollection = new CharacterCollection("Star Wars", "StarWars", categoryTypeNames);
             }
+            CategoryCollections.TryAdd(categoryCategoryName, new List<CategoryValue>());
+            CategoryCollections.TryAdd(speciesCategoryName, new List<CategoryValue>());
         }
         public override ICollection<Character>? RetrieveCharacters() {
             HtmlDocument document = HTMLRetriever.GetWikiDocument(WikiPageUrl);
@@ -71,7 +73,7 @@ namespace CharacterDatabaseAPI.WebScraper
                 }).ToList();
             }
             characterCategoryValue.Characters = characters;
-            CategoryValues.Add(characterCategoryValue);
+            CategoryCollections[categoryCategoryName].Add(characterCategoryValue);
             return characters;
         }
 
@@ -88,7 +90,7 @@ namespace CharacterDatabaseAPI.WebScraper
 
             ICollection<Character> characters = characterNodes.Select(characterNode => CreateCharacter(categorySets, characterNode)).ToList();
             speciesCategoryValue.Characters = characters;
-            CategoryValues.Add(speciesCategoryValue);
+            CategoryCollections[speciesCategoryName].Add(speciesCategoryValue);
             return characters;
         }
 

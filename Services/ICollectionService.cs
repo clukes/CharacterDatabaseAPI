@@ -2,7 +2,7 @@ using CharacterDatabaseAPI.Models;
 
 namespace CharacterDatabaseAPI.Services;
 
-public interface ICollectionService<TDocumentModel> where TDocumentModel : IDocumentModel
+public interface ICollectionService<TDocumentModel>
 {
     public Task<List<TDocumentModel>> GetAsync();
     public Task<TDocumentModel?> GetAsync(string id);

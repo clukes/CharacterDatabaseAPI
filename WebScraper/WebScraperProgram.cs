@@ -30,26 +30,32 @@ namespace CharacterDatabaseAPI.WebScraper
             Console.WriteLine("Star Wars characters updated");
         }
 
-        private static void ScraperUpdateIfNull()
+        private static void ScraperUpdateIfEmpty()
         {
-            if (starWarsCharactersScraper.Characters != null) return; 
+            if (starWarsCharactersScraper.Characters.Any()) return; 
             ScraperUpdateFromJSON();
         }
 
 
-        public async static void ScraperDBSave(CharacterCollectionService characterCollectionService, CategoryValueService categoryValueService, CharacterService characterService)
+        public async static void ScraperDBSave(IServiceProvider services)
         {
-            ScraperUpdateIfNull();
+            ScraperUpdateIfEmpty();
             if(starWarsCharactersScraper.CharacterCollection == null || starWarsCharactersScraper.Characters == null) 
             {
                 Console.WriteLine("No Star Wars characters found.");
                 return;
             }
-            await characterCollectionService.CreateAsync(starWarsCharactersScraper.CharacterCollection);
-            
-            await categoryValueService.CreateAsync(starWarsCharactersScraper.CategoryValues);
-            await characterService.CreateMultipleAsync(starWarsCharactersScraper.Characters);
+            // var characterCollectionService = services.GetService<CollectionService<CharacterCollection>>()!;
+            // var categoryCategoryService = services.GetService<CollectionService<CategoryValue>>()!;
+            // var speciesCategoryService = services.GetService<CollectionService<CategoryValue>>()!;
+            // var characterService = services.GetService<CollectionService<Character>>()!;
+
+            // await characterCollectionService.CreateOrUpdateAsync(starWarsCharactersScraper.CharacterCollection);
+            // await characterService.CreateOrUpdateManyAsync(starWarsCharactersScraper.Characters);
+            // await categoryCategoryService.CreateOrUpdateManyAsync(starWarsCharactersScraper.CategoryCollections["Category"]);
+            // await speciesCategoryService.CreateOrUpdateManyAsync(starWarsCharactersScraper.CategoryCollections["Species"]);
             Console.WriteLine("Star Wars characters added to database.");
+            starWarsCharactersScraper.WriteDataToJSONFile();
         }
 
     }
