@@ -10,7 +10,7 @@ namespace CharacterDatabaseAPI.WebScraper
         public static void ScraperRetrieve()
         {
             ICollection<Character>? characters = starWarsCharactersScraper.RetrieveCharacters();
-            if(characters == null) 
+            if (characters == null)
             {
                 Console.WriteLine("No Star Wars characters found");
                 return;
@@ -22,7 +22,7 @@ namespace CharacterDatabaseAPI.WebScraper
         private static void ScraperUpdateFromJSON()
         {
             starWarsCharactersScraper.ReadDataFromJSONFile();
-            if(starWarsCharactersScraper.Characters == null) 
+            if (starWarsCharactersScraper.Characters == null)
             {
                 Console.WriteLine("No Star Wars characters found");
                 return;
@@ -32,30 +32,33 @@ namespace CharacterDatabaseAPI.WebScraper
 
         private static void ScraperUpdateIfEmpty()
         {
-            if (starWarsCharactersScraper.Characters.Any()) return; 
+            if (starWarsCharactersScraper.Characters.Any()) return;
             ScraperUpdateFromJSON();
         }
 
 
-        public async static void ScraperDBSave(IServiceProvider services)
+        public async static void ScraperDBSave(IServiceProvider serviceProvider)
         {
+            var scope = serviceProvider.CreateScope();
+            ICharacterService? characterService = scope.ServiceProvider.GetService<ICharacterService>();
+
+            if (characterService == null)
+            {
+                Console.WriteLine("No characterService.");
+                return;
+            }
+
             ScraperUpdateIfEmpty();
-            if(starWarsCharactersScraper.CharacterCollection == null || starWarsCharactersScraper.Characters == null) 
+            if (starWarsCharactersScraper.Characters == null)
             {
                 Console.WriteLine("No Star Wars characters found.");
                 return;
             }
-            // var characterCollectionService = services.GetService<CollectionService<CharacterCollection>>()!;
-            // var categoryCategoryService = services.GetService<CollectionService<CategoryValue>>()!;
-            // var speciesCategoryService = services.GetService<CollectionService<CategoryValue>>()!;
-            // var characterService = services.GetService<CollectionService<Character>>()!;
 
-            // await characterCollectionService.CreateOrUpdateAsync(starWarsCharactersScraper.CharacterCollection);
-            // await characterService.CreateOrUpdateManyAsync(starWarsCharactersScraper.Characters);
-            // await categoryCategoryService.CreateOrUpdateManyAsync(starWarsCharactersScraper.CategoryCollections["Category"]);
-            // await speciesCategoryService.CreateOrUpdateManyAsync(starWarsCharactersScraper.CategoryCollections["Species"]);
-            Console.WriteLine("Star Wars characters added to database.");
             starWarsCharactersScraper.WriteDataToJSONFile();
+            await characterService.SaveManyAsync(starWarsCharactersScraper.Characters);
+            Console.WriteLine("Star Wars characters added to database.");
+            scope.Dispose();
         }
 
     }

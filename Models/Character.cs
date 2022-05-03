@@ -1,19 +1,15 @@
-using System.Text.Json.Serialization;
-
-namespace CharacterDatabaseAPI.Models
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
+namespace CharacterDatabaseAPI.Models;
+[DynamoDBTable("CharacterDatabase")]
+public class Character
 {
-    public class Character : IDocumentModel
-    {
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public string? Id { get; set; }
-        public string[] Names { get; set; }
-        public IDictionary<string, string> CategorySets { get; set; }
-
-        public Character(string[] names, IDictionary<string, string>? categorySets = null) 
-        {
-            Names = names;
-            CategorySets = categorySets ?? new Dictionary<string, string>();
-        }
-
-    }
+    [DynamoDBHashKey("Universe")]
+    public string Universe { get; set; } = null!;
+    [DynamoDBRangeKey("Name")]
+    public string Name { get; set; } = null!;
+    [DynamoDBProperty("OtherNames")]
+    public HashSet<string> OtherNames { get; set; } = null!;
+    [DynamoDBProperty("CategorySets")]
+    public Dictionary<string,string> CategorySets { get; set; } = null!;
 }

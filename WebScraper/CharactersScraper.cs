@@ -12,30 +12,22 @@ namespace CharacterDatabaseAPI.WebScraper
 
         protected string DefaultDirName = "Universe/";
         protected const string OutDir = "WebScraper/out/";
-        public CharacterCollection? CharacterCollection { get; set; }
         public ICollection<Character> Characters { get; set; }
-        public IDictionary<string, ICollection<CategoryValue>> CategoryCollections { get; set; }
 
-        public CharactersScraper(CharacterCollection? characterCollection = null, ICollection<Character>? characters = null, IDictionary<string, ICollection<CategoryValue>>? categoryCollections = null) 
+        public CharactersScraper(ICollection<Character>? characters = null) 
         {
-            CharacterCollection = characterCollection;
             Characters = characters ?? new List<Character>();
-            CategoryCollections = categoryCollections ?? new Dictionary<string, ICollection<CategoryValue>>();
         }
         public void WriteDataToJSONFile(string? dirName = null)
         {
             dirName ??= DefaultDirName;
-            WriteToJSONFile(CharacterCollection, GetFilePath(dirName, CharacterCollectionName));
             WriteToJSONFile(Characters, GetFilePath(dirName, CharactersName));
-            WriteToJSONFile(CategoryCollections, GetFilePath(dirName, CategoryCollectionsName));
         }
 
         public void ReadDataFromJSONFile(string? dirName = null)
         {
             dirName ??= DefaultDirName;
-            CharacterCollection = ReadFromJSONFile<CharacterCollection>(GetFilePath(dirName, CharacterCollectionName)) ?? CharacterCollection;
             Characters = ReadFromJSONFile<ICollection<Character>>(GetFilePath(dirName, CharactersName)) ?? Characters;
-            CategoryCollections = ReadFromJSONFile<IDictionary<string, ICollection<CategoryValue>>>(GetFilePath(dirName, CategoryCollectionsName)) ?? CategoryCollections;
         }
 
         public abstract ICollection<Character>? RetrieveCharacters();
