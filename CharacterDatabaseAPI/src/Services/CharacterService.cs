@@ -8,13 +8,13 @@ namespace CharacterDatabaseAPI.Services;
 
 public class CharacterService : ICharacterService
 {
-    private readonly AmazonDynamoDBClient _client;
+    private readonly IAmazonDynamoDB _client;
     private readonly IDynamoDBContext _dynamoDBContext;
 
-    public CharacterService()
+    public CharacterService(IAmazonDynamoDB? client = null, IDynamoDBContext? context = null)
     {
-        _client = new AmazonDynamoDBClient();
-        _dynamoDBContext = new DynamoDBContext(_client);
+        _client = client ?? new AmazonDynamoDBClient();
+        _dynamoDBContext = context ?? new DynamoDBContext(_client);
     }
 
     public async Task<IEnumerable<Character>> GetAsync(string universe)
