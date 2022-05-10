@@ -31,22 +31,24 @@ public class CharacterController : ControllerBase
         return Ok(character);
     }
 
-    [Route("create")]
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Save(Character character)
-    {
-        await _characterService.SaveAsync(character);
-        return Ok();
-    }
+    // TODO: Add authorisation so that these endpoints can be restored 
 
-    [Route("delete/{universe}/{characterName}")]
-    [HttpDelete]
-    public async Task<IActionResult> Delete(string universe, string characterName)
-    {
-        await _characterService.DeleteAsync(universe, characterName);
-        return Ok();
-    }
+    // [Route("create")]
+    // [HttpPost]
+    // [ValidateAntiForgeryToken]
+    // public async Task<IActionResult> Save(Character character)
+    // {
+    //     await _characterService.SaveAsync(character);
+    //     return Ok();
+    // }
+
+    // [Route("delete/{universe}/{characterName}")]
+    // [HttpDelete]
+    // public async Task<IActionResult> Delete(string universe, string characterName)
+    // {
+    //     await _characterService.DeleteAsync(universe, characterName);
+    //     return Ok();
+    // }
 
 
     [Route("search/{universe}")]

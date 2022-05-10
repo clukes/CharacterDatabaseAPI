@@ -1,5 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.DocumentModel;
+
 namespace CharacterDatabaseAPI.Models;
 [DynamoDBTable("CharacterDatabase")]
 public class Character
@@ -11,5 +11,5 @@ public class Character
     [DynamoDBProperty("OtherNames")]
     public HashSet<string> OtherNames { get; set; } = null!;
     [DynamoDBProperty("CategorySets")]
-    public Dictionary<string,string> CategorySets { get; set; } = null!;
+    public Dictionary<string, string> CategorySets { get; set; } = null!;
 }
