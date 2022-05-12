@@ -1,26 +1,36 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
-
+using Microsoft.AspNetCore.TestHost;
+using CharacterDatabaseAPI.Services;
+using Microsoft.Extensions.DependencyInjection;
 namespace CharacterDatabaseAPI.IntegrationTests;
 
 public class BasicTests
-    : IClassFixture<WebApplicationFactory<CharacterDatabaseAPIProgram>>
+    : IClassFixture<WebApplicationFactory<Startup>>
 {
-    private const string TestUniverse = "Test Universe";
-    private const string TestName = "Test Name";
+    private const string TestUniverse = "StarWars";
+    private const string TestName = "TestName";
 
-    private readonly WebApplicationFactory<CharacterDatabaseAPIProgram> _factory;
+    private readonly WebApplicationFactory<Startup> _factory;
 
-    public BasicTests(WebApplicationFactory<CharacterDatabaseAPIProgram> factory)
+    public BasicTests(WebApplicationFactory<Startup> factory)
     {
-        _factory = factory;
+        _factory = factory.WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureAppConfiguration((context, config) =>
+                    {
+                        config.Add();
+                    });
+                });
+
     }
 
     [Theory]
-    [InlineData($"get/{TestUniverse}")]
-    [InlineData($"get/{TestUniverse}/{TestName}")]
-    [InlineData($"search/{TestUniverse}")]
+    [InlineData("api/")]
+    [InlineData($"api/characters/{TestUniverse}")]
+    [InlineData($"api/characters/{TestUniverse}/get/{TestName}")]
+    [InlineData($"api/characters/{TestUniverse}/search")]
     public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
     {
         var client = _factory.CreateClient();
@@ -28,7 +38,6 @@ public class BasicTests
         var response = await client.GetAsync(url);
 
         response.EnsureSuccessStatusCode(); // Status Code 200-299
-        Assert.Equal("text/html; charset=utf-8",
-            response.Content.Headers.ContentType.ToString());
+        System.Console.WriteLine(await response.Content.ReadAsStringAsync());
     }
 }

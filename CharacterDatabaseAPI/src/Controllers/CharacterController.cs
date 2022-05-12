@@ -4,7 +4,7 @@ using CharacterDatabaseAPI.Services;
 
 namespace CharacterDatabaseAPI.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/characters")]
 [ApiController]
 public class CharacterController : ControllerBase
 {
@@ -15,7 +15,7 @@ public class CharacterController : ControllerBase
         _characterService = characterService;
     }
 
-    [Route("get/{universe}")]
+    [Route("{universe}")]
     [HttpGet]
     public async Task<IActionResult> Get(string universe)
     {
@@ -23,7 +23,7 @@ public class CharacterController : ControllerBase
         return Ok(searchResponse);
     }
 
-    [Route("get/{universe}/{characterName}")]
+    [Route("{universe}/get/{characterName}")]
     [HttpGet]
     public async Task<IActionResult> Get(string universe, string characterName)
     {
@@ -51,7 +51,7 @@ public class CharacterController : ControllerBase
     // }
 
 
-    [Route("search/{universe}")]
+    [Route("{universe}/search")]
     [HttpGet]
     public async Task<IActionResult> Search(string universe, string? categoryType = null, string? categoryValue = null)
     {

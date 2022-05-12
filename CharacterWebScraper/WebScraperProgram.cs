@@ -62,10 +62,10 @@ public class WebScraperProgram
 
     public static void Main(string[] args)
     {
-        var builder = CharacterDatabaseAPIProgram.CreateBuilder(args);
-        var app = CharacterDatabaseAPIProgram.BuildApp(builder);
+        var builder = Program.CreateHostBuilder(args);
+        var host = builder.Build();
 
         WebScraperProgram.ScraperRetrieve();
-        WebScraperProgram.ScraperDBSave(app.Services);
+        WebScraperProgram.ScraperDBSave(host.Services);
     }
 }
